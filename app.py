@@ -1,28 +1,22 @@
-# app.py - Assemblé par Gloire pour l'équipe Data-Analyzer
+# app.py - Assemblé par Ruphin pour l'équipe Data-Analyzer
 import os
 import streamlit as st
-import time
 import pandas as pd
+import random
 
 # ==========================================
 # IMPORTATION DE MES MODULES (MON CERVEAU PANDAS)
 # ==========================================
-# Ici, j'importe ma fonction de validation de fichier
 from utils.load_file import load_file
-
-# J'importe mes outils de nettoyage du fichier data_cleaner.py
 from utils.data_cleaner import get_cleaning_report, delete_duplicates
-
-# Et ici le module de statistiques globales que j'ai préparé
 from utils.info import get_info
 
-# mon visualizseur en attente
-# from utils.visualizer import visualiser
-
-# Configuration de la page faite par mon pote, je la laisse propre
+# ==========================================
+# CONFIGURATION DE LA PAGE
+# ==========================================
 st.set_page_config(page_title="Data-Analyzer files", page_icon="📊", layout="wide")
 
-# STYLE CSS (Le design sombre pour que ça fasse application pro)
+# STYLE CSS (Design sombre futuriste et pro conçue par GLOIRE)
 st.markdown(
     """
 <style>
@@ -40,163 +34,320 @@ h1 { color: #4CAF50; }
 # ==========================================
 with st.sidebar:
     st.title("📌 Menu & navigation")
-    # st.radio crée les boutons ronds. J'ai harmonisé les noms avec mes conditions plus bas.
     section = st.radio(
         "Aller vers",
-        ["Accueil", "graphiques", "Analyse détaillée", "Synthèse IA", "collaboration"],
+        [
+            "Accueil",
+            "📊graphiques",
+            "Analyse détaillée",
+            "Synthèse IA",
+            "collaboration",
+        ],
     )
     st.divider()
     st.subheader("🔗 Liens annexes")
     st.markdown(
-        "- [Streamlit](https://streamlit.io)\n- [Pandas](https://pydata.org)\n- [Dépot github du projet](https://github.geniruphin-junior/data-files.git)"
+        "- [Streamlit](https://streamlit.io)\n"
+        "- [Pandas](https://pydata.org)\n"
+        "- [NumPy](https://numpy.org)\n"
+        "- [Matplotlib](https://matplotlib.org)\n"
+        "- [Scikit-learn](https://scikit-learn.org)\n"
+        "- [TensorFlow](https://www.tensorflow.org)\n"
+        "- [PyTorch](https://pytorch.org)\n"
+        "- [Dépot GitHub du projet](https://github.geniruphin-junior/data-files.git)"
     )
 
-
 # ==========================================
-# PAGE 1 : ACCUEIL (CHARGEMENT & NETTOYAGE)
+# PAGE 1 : ACCUEIL (INCOMPARABLE FUTURISTE)
 # ==========================================
 if section == "Accueil":
-    st.title("Bienvenue sur Data-Analyzer files")
-    st.write("Plateforme d’analyse de données et visualisation de fichiers.")
-
-    # Le composant magique de Streamlit pour glisser-déposer le fichier
-    uploaded_file = st.file_uploader(
-        "Importer un fichier CSV ou Excel", type=["csv", "xlsx"]
+    st.title("🚀 Bienvenue sur Data-Analyzer Files")
+    st.write(
+        "**L’assistant intelligent pour explorer, nettoyer et visualiser vos données.**"
     )
 
-    # Si l'utilisateur a mis un fichier dans la zone de dépôt :
+    # --- Guide utilisateur ---
+    st.markdown("""
+    ### 🧭 Guide rapide
+    1. Importez votre fichier CSV ou Excel.  
+    2. Analysez vos données avec nos outils automatiques.  
+    3. Visualisez vos résultats dans des graphiques interactifs futuristes.  
+    4. Collaborez avec votre équipe grâce à la section dédiée.  
+    5. Explorez nos ressources : [Firebase](https://firebase.google.com) | [Copilot](https://copilot.microsoft.com)
+    """)
+
+    uploaded_file = st.file_uploader(
+        "📂 Importer un fichier CSV ou Excel (plus tard PDF et Word)",
+        type=["csv", "xlsx"],
+    )
+
+    # --- Démo avant upload ---
+    if not uploaded_file and "df" not in st.session_state:
+        st.info(
+            "💡 Pas encore de fichier ? Voici une démo futuriste pour découvrir l’application."
+        )
+
+        demo_df = pd.DataFrame(
+            {
+                "Langage": ["Python", "JavaScript", "C++", "TypeScript", "Java", "Go"],
+                "Domaine": [
+                    "Data Science",
+                    "Web",
+                    "Systèmes",
+                    "Web Frontend",
+                    "Entreprise",
+                    "Cloud",
+                ],
+                "Utilisateurs GitHub (k)": [1200, 950, 800, 600, 1100, 400],
+                "Likes (k)": [500, 420, 300, 280, 450, 150],
+                "Clients": [300, 250, 180, 220, 310, 140],
+                "Années pour devenir Senior": [4, 3, 5, 3, 6, 4],
+            }
+        )
+        st.subheader("🎬 Démonstration instantanée")
+        st.dataframe(demo_df, use_container_width=True)
+
+        import plotly.express as px
+
+        # Palette cyberpunk fixe
+        cyberpunk_colors = [
+            "#FF007F",
+            "#00F0FF",
+            "#9D00FF",
+            "#39FF14",
+            "#FF00F0",
+            "#FF0033",
+        ]
+
+        # 1️⃣ Barres néon futuristes
+        fig1 = px.bar(
+            demo_df,
+            x="Langage",
+            y="Utilisateurs GitHub (k)",
+            color="Langage",
+            title="🚀 Popularité GitHub par langage",
+            template="plotly_dark",
+            color_discrete_sequence=cyberpunk_colors,
+        )
+        st.plotly_chart(fig1, use_container_width=True)
+
+        # 2️⃣ Courbe interactive
+        fig2 = px.line(
+            demo_df,
+            x="Langage",
+            y="Likes (k)",
+            markers=True,
+            title="📈 Likes GitHub par langage",
+            template="plotly_dark",
+            color_discrete_sequence=cyberpunk_colors,
+        )
+        st.plotly_chart(fig2, use_container_width=True)
+
+        # 3️⃣ Scatter futuriste
+        fig3 = px.scatter(
+            demo_df,
+            x="Clients",
+            y="Années pour devenir Senior",
+            size="Utilisateurs GitHub (k)",
+            color="Langage",
+            hover_name="Domaine",
+            title="🌌 Clients vs Années pour devenir Senior",
+            template="plotly_dark",
+            color_discrete_sequence=cyberpunk_colors,
+        )
+        st.plotly_chart(fig3, use_container_width=True)
+
+        # 4️⃣ une autre coube mais 100 pourcent streamlit
+        st.line_chart(
+            demo_df.set_index("Années pour devenir Senior"), use_container_width=True
+        )
+
+        # --- IA fictive ---
+        st.subheader("🤖 Simulation IA")
+        st.write(
+            "**IA Futuriste :** Bonjour Ruphin 👋, j’ai analysé les langages de programmation. Voici mes observations :"
+        )
+        st.success("✅ Python et JavaScript dominent en popularité et en likes.")
+        st.warning(
+            "⚠️ C++ reste puissant mais demande plus d’années pour devenir senior."
+        )
+        st.info(
+            "💡 TypeScript est stratégique : rapide à maîtriser et très demandé en web moderne."
+        )
+
+        # --- Bloc code pour installation ---
+        st.subheader("💻 Commandes utiles")
+        st.code(
+            """
+# Cloner le dépôt GitHub
+git clone https://github.com/geniruphin-junior/data-files.git
+
+# Installer les librairies nécessaires
+pip install streamlit pandas matplotlib numpy plotly
+        """,
+            language="bash",
+        )
+
+    # --- Après upload : vraies données ---
     if uploaded_file:
-
-        # SÉCURITÉ ET PASSERELLE POUR MON LOAD_FILE :
-        # Streamlit garde le fichier en mémoire vive. Mais ma fonction 'load_file' a absolument
-        # besoin d'un chemin texte (un file_path) pour faire ses vérifications OS et Magic.
-        # Du coup, je crée un chemin temporaire dans le dossier courant (le fameux point ".")
         temp_path = os.path.join(".", uploaded_file.name)
-
-        # J'ouvre ce fichier vide sur le disque dur en mode écriture binaire ("wb")
         with open(temp_path, "wb") as f:
-            # J'écris les octets du fichier téléversé dedans
             f.write(uploaded_file.getbuffer())
 
-        # VÉRIFICATION : Si mon DataFrame n'est pas encore dans mon coffre-fort (session_state)
-        if "df" not in st.session_state:
-            # st.spinner affiche une animation de chargement super cool pendant les calculs
-            with st.spinner(
-                "Validation et chargement sécurisé des données par l'ia..."
-            ):
-                try:
-                    # J'appelle MA fonction principale load_file en lui donnant le chemin du fichier sur le disque.
-                    # Si le fichier viole mes règles (trop lourd, faux type MIME), ça va basculer direct dans le 'except'
-                    st.session_state["df"] = load_file(temp_path)
-                    st.success("Données validées et chargées avec succès !")
-                    st.success(
-                        "voici vos données pretes à l 'exploitation et manupulation"
-                    )
+        with st.spinner("Chargement et validation des données..."):
+            try:
+                st.session_state["df"] = load_file(temp_path)
+                st.success("✅ Données chargées avec succès !")
+            except Exception as e:
+                st.error(f"Erreur : {e}")
+            finally:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
 
-                except Exception as e:
-                    # Si ma fonction load_file a levé une erreur, je bloque tout et j'affiche l'alerte en rouge
-                    st.error(f"Erreur de validation : {e}")
-
-                finally:
-                    # Quoi qu'il arrive (succès ou plantage), je supprime le fichier temporaire du disque dur.
-                    # C'est ultra important pour ne pas saturer l'espace de stockage !
-                    if os.path.exists(temp_path):
-                        os.remove(temp_path)
-
-        # Si le fichier a passé mes tests avec succès et qu'il est bien stocké en session :
         if "df" in st.session_state:
-            # Je récupère le DataFrame du coffre-fort pour travailler dessus tranquillement
             df_actuel = st.session_state["df"]
-
-            # J'appelle mon rapport global issu de mon fichier data_cleaner.py
             report = get_cleaning_report(df_actuel)
 
-            # J'affiche mes statistiques de nettoyage dans des jolies boîtes d'affichage (metrics)
+            # --- Métriques globales ---
             st.subheader("⚙️ Métriques globales de mon Data Cleaner")
             col1, col2, col3, col4 = st.columns(4)
             col1.metric("Lignes", f"{report['rows']:,}")
             col2.metric("Colonnes", report["columns"])
             col3.metric("Cases vides", report["missing_values"])
             col4.metric("Doublons détectés", report["duplicates"])
-            # Petite note technique pour rassurer sur la consommation RAM de nos machines à 4Go
-            st.info(
-                f"💾 Mémoire RAM consommée : {report['memory_mb_used']} Mo (Sécurisé pour vos 4Go)"
-            )
 
-            # BOUTONS D'ACTION RAPIDE (Nettoyage en un clic)
-            st.subheader("🛠️ Actions rapides de nettoyage")
-            c1, c2 = st.columns(2)
+            # --- Boutons de nettoyage ---
+            st.subheader("🧹 Nettoyage rapide")
+            if st.button("🗑️ Enlever les doublons"):
+                df_actuel = delete_duplicates(df_actuel)
+                st.session_state["df"] = df_actuel
+                st.success("✅ Doublons supprimés.")
 
-            if c1.button("Remplir les cases vides (Mode Auto)"):
-                # Si on clique, on applique un fillna global et on met à jour la session
-                st.session_state["df"] = df_actuel.fillna(0)
-                st.success("Cases vides nettoyées !")
-                # st.rerun() force Streamlit à recharger la page immédiatement pour voir le tableau mis à jour
-                st.rerun()
+            if st.button("🧩 Remplir les valeurs vides"):
+                for col in df_actuel.columns:
+                    if df_actuel[col].dtype in ["int64", "float64"]:
+                        df_actuel[col] = df_actuel[col].fillna(0)
+                    else:
+                        df_actuel[col] = df_actuel[col].fillna("indefinite")
+                st.session_state["df"] = df_actuel
+                st.success(
+                    "✅ Valeurs vides remplacées (0 pour numériques, 'indefinite' pour chaînes)."
+                )
 
-            if c2.button("Supprimer les doublons détectés"):
-                # J'appelle ma fonction delete_duplicates de mon fichier data_cleaner.py
-                st.session_state["df"] = delete_duplicates(df_actuel)
-                st.success("Doublons supprimés !")
-                st.rerun()
-
-            # L'aperçu dynamique des données (st.dataframe est interactif, contrairement à st.table)
-            st.subheader(
-                "👀 Aperçu des premières et dernières lignes de votre dataframe"
-            )
-            st.write("- voici vos premieres lignes")
+            # --- Aperçu des données ---
+            st.subheader("👀 Aperçu rapide du DataFrame")
             st.dataframe(df_actuel.head(5), use_container_width=True)
-            st.write("Et voilà le terminus de votre programme")
             st.dataframe(df_actuel.tail(5), use_container_width=True)
 
-            st.subheader(
-                "📉 Graphiques sur votre fichier proposé par l'ia et l'application"
-            )
-# ======================================
-# AVANT PAGE DEUX PASSONS AUX GRAPHIQUES
-# ====================================
-elif section == "graphiques":
-    st.title("Visualisations des vos données")
-    st.info("Les graphiques futuristes et manupulable seront d'ici là dispo")
-# ==========================================
-# PAGE 2 : ANALYSE DÉTAILLÉE (MON GET_RESULTS)
-# ==========================================
-elif section == "Analyse détaillée":
-    st.title("Analyse détaillée & Statistiques avancées")
+            # --- Graphique automatique ---
+            st.subheader("📉 Aperçu graphique automatique")
+            for col in df_actuel.columns:
+                df_actuel[col] = pd.to_numeric(df_actuel[col], errors="coerce")
 
-    # Si l'utilisateur vient ici sans avoir chargé de fichier en page d'accueil, je le bloque poliment et cruellement
+            cols_num = df_actuel.select_dtypes(include="number").columns.tolist()
+            cols_str = df_actuel.select_dtypes(include="object").columns.tolist()
+
+            if cols_num and cols_str:
+                import plotly.express as px
+
+                col_x = cols_str[0]
+                col_y = cols_num[0]
+                fig_auto = px.bar(
+                    df_actuel.groupby(col_x)[col_y].mean().reset_index(),
+                    x=col_x,
+                    y=col_y,
+                    color=col_x,
+                    title=f"Graphique futuriste : {col_y} par {col_x}",
+                    template="plotly_dark",
+                    color_discrete_sequence=cyberpunk_colors,
+                )
+                st.plotly_chart(fig_auto, use_container_width=True)
+
+
+# ==========================================
+# PAGE 2 : 📊 GRAPHIQUES (INTERACTIF & STABLE)
+# ==========================================
+elif section == "📊graphiques":
+    st.title("📊 Graphiques dynamiques et interactifs")
+
     if "df" not in st.session_state:
         st.warning(
-            "⚠️ Veuillez d'abord importer un fichier sur la page d'Accueil tu connais pas lire."
+            "⚠️ Importez d’abord un fichier sur la page d’accueil ou utilisez la démo."
         )
+        st.dataframe(
+            pd.DataFrame({"Exemple": ["A", "B", "C"], "Valeurs": [10, 20, 15]})
+        )
+        st.bar_chart(pd.DataFrame({"Valeurs": [10, 20, 15]}, index=["A", "B", "C"]))
+    else:
+        df = st.session_state["df"].copy()
+        for col in df.columns:
+            if df[col].dtype != "object":
+                df[col] = pd.to_numeric(df[col], errors="coerce")
+
+        cols_num = df.select_dtypes(include="number").columns.tolist()
+        cols_str = df.select_dtypes(exclude="number").columns.tolist()
+
+        st.subheader("🎛️ Configuration du graphique")
+        col_x = st.selectbox("Choisir une colonne catégorielle (X)", cols_str)
+        col_y = st.selectbox("Choisir une colonne numérique (Y)", cols_num)
+
+        grouped = (
+            df.groupby(col_x)[col_y].mean().sort_values(ascending=False).to_frame()
+        )
+
+        cyberpunk_palette = [
+            "#FF007F",
+            "#00F0FF",
+            "#9D00FF",
+            "#39FF14",
+            "#FF00F0",
+            "#FF0033",
+            "#00FFCC",
+            "#FFFF00",
+        ]
+        grouped["Couleur"] = (
+            cyberpunk_palette * (len(grouped) // len(cyberpunk_palette) + 1)
+        )[: len(grouped)]
+
+        st.info(f"📊 Graphique généré : **{col_y}** par **{col_x}**")
+        st.bar_chart(grouped, y=col_y, color="Couleur")
+
+        # --- Mémoire session_state ---
+        st.session_state["last_graph"] = {"x": col_x, "y": col_y}
+        st.success(f"🧠 Mémoire sauvegardée : graphique {col_y} par {col_x}")
+# ==========================================
+# PAGE 3 : ANALYSE DÉTAILLÉE
+# ==========================================
+elif section == "Analyse détaillée":
+    st.title("🔬 Analyse détaillée & Statistiques avancées")
+
+    # Si aucun fichier n'est chargé, je bloque poliment
+    if "df" not in st.session_state:
+        st.warning("⚠️ Veuillez d'abord importer un fichier sur la page d'Accueil.")
     else:
         df_actuel = st.session_state["df"]
 
+        # --- Configuration du GroupBy ---
         st.subheader("📊 Configuration de l'analyse croisée (Group By)")
         col_g, col_t = st.columns(2)
-
-        # selectbox crée une liste déroulante avec les vraies colonnes de notre fichier !
         group_col = col_g.selectbox(
             "Sélectionner la colonne de regroupement", df_actuel.columns
         )
-
-        # Je filtre les colonnes pour ne proposer que des chiffres dans la cible des calculs
         cols_numeriques = df_actuel.select_dtypes(include="number").columns.tolist()
-        if cols_numeriques:
-            target_col = col_t.selectbox(
+        target_col = (
+            col_t.selectbox(
                 "Sélectionner la colonne cible (Numérique)", cols_numeriques
             )
-        else:
-            target_col = None
-            st.error("Aucune colonne numérique trouvée pour faire des calculs.")
+            if cols_numeriques
+            else None
+        )
 
-        # J'appelle mon super module get_results.py conçu pour l'analyse
-        # J'ai fixé max_rows=1000 à l'intérieur pour préserver nos ordinateurs à 4Go de RAM
+        # --- Calcul via mon module get_info ---
         info_calculée = get_info(
             df_actuel, group_col=group_col, target_col=target_col, max_rows=1000
         )
 
-        # Affichage des dtypes (Mise en forme de mon dictionnaire en tableau Pandas pour l'interface)
+        # --- Types et valeurs manquantes ---
         st.subheader("🧬 Types des colonnes et valeurs manquantes")
         types_df = pd.DataFrame(
             {
@@ -206,24 +357,82 @@ elif section == "Analyse détaillée":
         )
         st.dataframe(types_df.T, use_container_width=True)
 
-        # Si mon module get_results a généré une clé "groupby" dans son dictionnaire de retour :
+        # --- Résultats du groupby ---
         if "groupby" in info_calculée:
             st.subheader(
                 f"📈 Résultat de l'analyse collective : {target_col} par {group_col}"
             )
-            # Je transforme la liste de dictionnaires en DataFrame affichable
             df_group = pd.DataFrame(info_calculée["groupby"])
             st.dataframe(df_group, use_container_width=True)
 
-            # Un petit graphique d'analyse rapide basé directement sur les moyennes de mon groupby
+            # Graphique basé sur les moyennes
             st.bar_chart(df_group.set_index(group_col)["mean"])
 
+            # Mémoire session_state : je garde le dernier groupby
+            st.session_state["last_analysis"] = {
+                "group": group_col,
+                "target": target_col,
+            }
+            st.success(
+                f"🧠 Mémoire sauvegardée : analyse de {target_col} par {group_col}"
+            )
 
 # ==========================================
-# PAGE 3 : LE MODE IA (EN ATTENTE DE SCRIPT)
+# PAGE 4 : SYNTHÈSE IA (EN ATTENTE DE SCRIPT)
 # ==========================================
 elif section == "Synthèse IA":
-    st.title("Mode Intelligence Artificielle")
+    st.title("🤖 Mode Intelligence Artificielle")
+
+    # Simulation IA futuriste
     st.info(
-        "Section en cours de développement. Vos calculs Pandas y seront injectés très bientôt."
+        "Cette section est en cours de développement. Bientôt, vos calculs Pandas et vos modèles IA seront injectés ici pour générer des synthèses automatiques."
+    )
+
+    # Démo fictive pour rassurer l'utilisateur
+    st.subheader("🎬 Démonstration IA fictive")
+    st.write(
+        "**IA DataBot :** Bonjour Ruphin 👋, j’ai analysé ton DataFrame. Voici mes observations :"
+    )
+    st.success("✅ Les données montrent une tendance positive sur la colonne 'Ventes'.")
+    st.warning(
+        "⚠️ Attention : la colonne 'Croissance (%)' présente des valeurs manquantes qui pourraient fausser l'analyse."
+    )
+    st.info(
+        "💡 Bientôt, cette section utilisera une clé API pour générer des synthèses réelles basées sur vos données."
+    )
+# ==========================================
+# PAGE 5 : COLLABORATION
+# ==========================================
+elif section == "collaboration":
+    st.title("🤝 Collaboration & Partage")
+    st.write("Cette section permet de travailler en équipe sur vos données.")
+
+    # --- Options de collaboration ---
+    st.subheader("📤 Export & Partage")
+    st.markdown("""
+    - Exporter vos résultats vers un fichier **CSV** ou **Excel**  
+    - Partager vos analyses avec vos collègues via un **lien sécurisé**  
+    - Intégrer vos dashboards dans des outils comme **Notion**, **Slack**, ou **Teams**  
+    - Gérer les accès et la sécurité pour un travail collaboratif
+    """)
+
+    # --- Démo fictive ---
+    st.subheader("🎬 Démonstration de collaboration")
+    st.write(
+        "**IA DataBot :** Ruphin, imagine que tu viens d’exporter ton rapport. Voici ce que tes collègues verront :"
+    )
+    demo_collab = pd.DataFrame(
+        {
+            "Utilisateur": ["Alice", "Bob", "Charlie"],
+            "Action": [
+                "Consulté le rapport",
+                "Ajouté un commentaire",
+                "Partagé sur Slack",
+            ],
+        }
+    )
+    st.dataframe(demo_collab, use_container_width=True)
+
+    st.info(
+        "Fonctionnalités en cours de développement. L'objectif est de permettre aux entreprises de collaborer en temps réel sur leurs fichiers."
     )
