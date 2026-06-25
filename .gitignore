@@ -1,36 +1,21 @@
-# ==========================================
-# DOSSIERS PERSONNELS & RECHERCHE
-# ==========================================
 # Ignore votre dossier d'expérimentation et tout son contenu
 experimentation/
 experimentations/
-
-# ==========================================
-# ENVIRONNEMENTS ET DÉPENDANCES
-# ==========================================
-# Fichiers de dépendances Node.js (si projet JavaScript)
-node_modules/
-npm-debug.log*
-
-# Environnements virtuels Python (si projet Python)
+# Environnements virtuels Python 
 venv/
 .venv/
 env/
 __pycache__/
 *.pyc
 
-# ==========================================
-# SÉCURITÉ ET CONFIGURATION (TRÈS IMPORTANT)
-# ==========================================
-# Fichiers contenant vos clés d'API secrètes ou configurations Firebase
+
+# Fichiers contenant les clés d'API secrètes ou configurations Firebase
 .env
 .env.local
 .env.*.local
 
-# ==========================================
-# FICHIERS SYSTÈME (LOGS & LOGICIELS)
-# ==========================================
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+
