@@ -1,14 +1,15 @@
 # app.py - Assemblé par Ruphin pour l'équipe Data-Analyzer
 import os
 import streamlit as st
-import pandas as pd
+import pandas as pd as px
 import random
+import plotly.express
 
 # ==========================================
 # IMPORTATION DE MES MODULES (MON CERVEAU PANDAS)
 # ==========================================
 from utils.load_file import load_file
-from utils.data_cleaner import get_cleaning_report, delete_duplicates
+from utils.data_cleaner import get_cleaning_report, delete_duplicates,fill_missing_values
 from utils.info import get_info
 
 # ==========================================
@@ -58,7 +59,7 @@ with st.sidebar:
     )
 
 # ==========================================
-# PAGE 1 : ACCUEIL (INCOMPARABLE FUTURISTE)
+# PAGE 1 : ACCUEIL (Guide simple)
 # ==========================================
 if section == "Accueil":
     st.title("🚀 Bienvenue sur Data-Analyzer Files")
@@ -72,8 +73,8 @@ if section == "Accueil":
     1. Importez votre fichier CSV ou Excel.  
     2. Analysez vos données avec nos outils automatiques.  
     3. Visualisez vos résultats dans des graphiques interactifs futuristes.  
-    4. Collaborez avec votre équipe grâce à la section dédiée.  
-    5. Explorez nos ressources : [Firebase](https://firebase.google.com) | [Copilot](https://copilot.microsoft.com)
+    4. Collaborez avec votre équipe ou sur le projet grâce à la section dédiée.  
+    5. Explorez les dev ressources : [Firebase](https://firebase.google.com) | [Copilot](https://copilot.microsoft.com)
     """)
 
     uploaded_file = st.file_uploader(
@@ -107,7 +108,7 @@ if section == "Accueil":
         st.subheader("🎬 Démonstration instantanée")
         st.dataframe(demo_df, use_container_width=True)
 
-        import plotly.express as px
+        
 
         # Palette cyberpunk fixe
         cyberpunk_colors = [
@@ -157,15 +158,19 @@ if section == "Accueil":
         )
         st.plotly_chart(fig3, use_container_width=True)
 
-        # 4️⃣ une autre coube mais 100 pourcent streamlit
-        st.line_chart(
-            demo_df.set_index("Années pour devenir Senior"), use_container_width=True
+        # 4️⃣ part de chaque language sur github
+        fig4 = px.pie(
+            demo_df,
+            names="langage",
+            values="Utilsateurs Github (K)",
+            title="Part de chaque langage sur github",
         )
+        st.plotly_chart(fig4, use_container_width=True)
 
         # --- IA fictive ---
         st.subheader("🤖 Simulation IA")
         st.write(
-            "**IA Futuriste :** Bonjour Ruphin 👋, j’ai analysé les langages de programmation. Voici mes observations :"
+            "**DataBOt :** Bonjour Ruphin 👋, j’ai analysé les langages de programmation. Voici mes observations :"
         )
         st.success("✅ Python et JavaScript dominent en popularité et en likes.")
         st.warning(
@@ -179,11 +184,11 @@ if section == "Accueil":
         st.subheader("💻 Commandes utiles")
         st.code(
             """
-# Cloner le dépôt GitHub
+# Cloner le dépôt GitHub ou votre fork
 git clone https://github.com/geniruphin-junior/data-files.git
 
 # Installer les librairies nécessaires
-pip install streamlit pandas matplotlib numpy plotly
+pip install -r requirements.txt
         """,
             language="bash",
         )
@@ -200,7 +205,9 @@ pip install streamlit pandas matplotlib numpy plotly
                 st.success("✅ Données chargées avec succès !")
             except Exception as e:
                 st.error(f"Erreur : {e}")
+            # quoi qu'il se passe on efface le fichier créé
             finally:
+
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
 
@@ -224,11 +231,7 @@ pip install streamlit pandas matplotlib numpy plotly
                 st.success("✅ Doublons supprimés.")
 
             if st.button("🧩 Remplir les valeurs vides"):
-                for col in df_actuel.columns:
-                    if df_actuel[col].dtype in ["int64", "float64"]:
-                        df_actuel[col] = df_actuel[col].fillna(0)
-                    else:
-                        df_actuel[col] = df_actuel[col].fillna("indefinite")
+                df_actuel = fill_missing_values(df_actuel)
                 st.session_state["df"] = df_actuel
                 st.success(
                     "✅ Valeurs vides remplacées (0 pour numériques, 'indefinite' pour chaînes)."
@@ -248,7 +251,7 @@ pip install streamlit pandas matplotlib numpy plotly
             cols_str = df_actuel.select_dtypes(include="object").columns.tolist()
 
             if cols_num and cols_str:
-                import plotly.express as px
+                
 
                 col_x = cols_str[0]
                 col_y = cols_num[0]
@@ -257,11 +260,13 @@ pip install streamlit pandas matplotlib numpy plotly
                     x=col_x,
                     y=col_y,
                     color=col_x,
-                    title=f"Graphique futuriste : {col_y} par {col_x}",
+                    title=f"Graphique de : {col_y} par {col_x}",
                     template="plotly_dark",
                     color_discrete_sequence=cyberpunk_colors,
                 )
                 st.plotly_chart(fig_auto, use_container_width=True)
+            else:
+                st.info("Votre fichier ne permet pas de genérer des graphiques automatiques, consulter la section graphique")
 
 
 # ==========================================
@@ -274,20 +279,22 @@ elif section == "📊graphiques":
         st.warning(
             "⚠️ Importez d’abord un fichier sur la page d’accueil ou utilisez la démo."
         )
+        st.write("Voici une démo des graphiques")
         st.dataframe(
             pd.DataFrame({"Exemple": ["A", "B", "C"], "Valeurs": [10, 20, 15]})
         )
         st.bar_chart(pd.DataFrame({"Valeurs": [10, 20, 15]}, index=["A", "B", "C"]))
     else:
-        df = st.session_state["df"].copy()
-        for col in df.columns:
+        df = st.session_state["df"].copy() # on fait une copie
+        for col in df.columns: # on repère les colonnes nécessaires 
             if df[col].dtype != "object":
                 df[col] = pd.to_numeric(df[col], errors="coerce")
 
-        cols_num = df.select_dtypes(include="number").columns.tolist()
+        cols_num = df.select_dtypes(include="number").columns.tolist() # je les transforme en liste
         cols_str = df.select_dtypes(exclude="number").columns.tolist()
 
         st.subheader("🎛️ Configuration du graphique")
+        # selection des colonnes pour visualisation 
         col_x = st.selectbox("Choisir une colonne catégorielle (X)", cols_str)
         col_y = st.selectbox("Choisir une colonne numérique (Y)", cols_num)
 
