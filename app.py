@@ -246,18 +246,21 @@ pip install -r requirements.txt
 
             # --- Graphique automatique ---
             st.subheader("📉 Aperçu graphique automatique")
+            cols_num = []
+            cols_str = []
             for col in df_actuel.columns:
-                df_actuel[col] = pd.to_numeric(df_actuel[col], errors="coerce")
-
-            cols_num = df_actuel.select_dtypes(include="number").columns.tolist()
-            cols_str = df_actuel.select_dtypes(include="object").columns.tolist()
-
-            if cols_num and cols_str:
-
-                col_x = cols_str[0]
-                col_y = cols_num[0]
+                converted = pd.to_numeric(df_actuel[col], errors="ignore")
+                if pd.api.types.is_numeric_dtype(converted):
+                    df_actuel[col] = converted
+                    cols_num.append(col)
+                elif df_actuel[col].dtype == "object":
+                    cols_str.append(col)
+                    if cols_num and cols_str:
+                        col_x = cols_str[0]
+                        col_y = cols_num[0]
+                df_grouped = df_actuel.groupby(col_x)[col_y].mean().reset_index()
                 fig_auto = px.bar(
-                    df_actuel.groupby(col_x)[col_y].mean().reset_index(),
+                    df_grouped,
                     x=col_x,
                     y=col_y,
                     color=col_x,
