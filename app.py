@@ -187,7 +187,7 @@ if section == "Accueil":
         st.code(
             """
 # Cloner le dépôt GitHub ou votre fork
-git clone https://github.com/geniruphin-junior/data-files.git
+git clone https://github.com/geniruphin-junior/data-analizer-files.git
 
 # Installer les librairies nécessaires
 pip install -r requirements.txt
