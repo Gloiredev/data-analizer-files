@@ -163,8 +163,8 @@ if section == "Accueil":
         # 4️⃣ part de chaque language sur github
         fig4 = px.pie(
             demo_df,
-            names="langage",
-            values="Utilsateurs Github (K)",
+            names=demo_df.columns[0],
+            values=demo_df.columns[2],
             title="Part de chaque langage sur github",
         )
         st.plotly_chart(fig4, use_container_width=True)
@@ -176,7 +176,7 @@ if section == "Accueil":
         )
         st.success("✅ Python et JavaScript dominent en popularité et en likes.")
         st.warning(
-            "⚠️ C++ reste puissant mais demande plus d’années pour devenir senior."
+            "⚠️ C++ reste puissant mais demande plus d’années pour devenir senior et est concurencé par rust."
         )
         st.info(
             "💡 TypeScript est stratégique : rapide à maîtriser et très demandé en web moderne."
